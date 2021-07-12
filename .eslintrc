@@ -9,12 +9,11 @@
     "ellowJs": true,
     "project": "./tsconfig.json"
   },
-  "plugins": ["@typescript-eslint", "github"],
+  "plugins": ["@typescript-eslint"],
   "extends": [
     "eslint:recommended",
     "plugin:@typescript-eslint/recommended",
-    "plugin:@typescript-eslint/recommended-requiring-type-checking",
-    "plugin:github/recommended"
+    "plugin:@typescript-eslint/recommended-requiring-type-checking"
   ],
   "rules": {
     "strict": ["error", "never"],
