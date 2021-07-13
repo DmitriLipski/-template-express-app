@@ -6,11 +6,14 @@ import app from './app';
 const main = () => {
 	const server = http.createServer(app);
 
-	const port = process.env.PORT || 5000;
+	const port = process.env.PORT || 3001;
 
 	server.listen(port, () => {
+		console.log('');
+		console.log(`${chalk.blue.bold('Version 0.0.1')}`);
+		console.log('');
 		console.log(
-			`Server is up ${chalk.green.bold(
+			`${chalk.yellow.bold('App')} is up ${chalk.green.bold(
 				'successfully',
 			)} on port ${chalk.blue.bold(port)}`,
 		);
