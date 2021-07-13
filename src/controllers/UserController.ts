@@ -3,13 +3,13 @@ import { randomBytes } from 'crypto';
 import { Service } from 'typedi';
 
 import {
-	PostService,
+	UserService,
 	LoggerService,
 	ResponseService,
 	InvalidPropertyError,
 	MethodNotAllowedError,
 } from '../services';
-import { Post } from '../models/Post';
+import { User } from '../models/User';
 
 import { HandleRequestResultType, HttpMethods } from '../types';
 
@@ -22,14 +22,14 @@ type HttpRequestType<T> = {
 };
 
 @Service()
-class PostController {
+class UserController {
 	constructor(
-		private readonly postService: PostService,
+		private readonly userService: UserService,
 		private readonly logger: LoggerService,
 		private readonly responseService: ResponseService,
 	) {}
 
-	adaptRequest(_req: Request): HttpRequestType<Post> {
+	adaptRequest(_req: Request): HttpRequestType<User> {
 		return {
 			path: _req.path,
 			method: _req.method,
@@ -39,7 +39,7 @@ class PostController {
 		};
 	}
 
-	async handlePostRequests(_req: Request, res: Response): Promise<Response> {
+	async handleUserRequests(_req: Request, res: Response): Promise<Response> {
 		const httpRequest = this.adaptRequest(_req);
 
 		return this.handleRequest(httpRequest)
@@ -56,13 +56,13 @@ class PostController {
 	}
 
 	async handleRequest(
-		httpRequest: HttpRequestType<Post>,
-	): Promise<HandleRequestResultType<Post[] | Post | unknown>> {
+		httpRequest: HttpRequestType<User>,
+	): Promise<HandleRequestResultType<User[] | User | unknown>> {
 		switch (httpRequest.method) {
 			case HttpMethods.GET:
-				return this.getAllPosts();
+				return this.getAllUsers();
 			case HttpMethods.POST:
-				return this.addPost(httpRequest);
+				return this.addUser(httpRequest);
 			default:
 				return this.responseService.makeHttpError(
 					new MethodNotAllowedError(
@@ -72,37 +72,37 @@ class PostController {
 		}
 	}
 
-	async getAllPosts(): Promise<HandleRequestResultType<Post[] | unknown>> {
+	async getAllUsers(): Promise<HandleRequestResultType<User[] | unknown>> {
 		try {
-			const result = (await this.postService.getAllPosts()) as Post[];
-			return this.responseService.makeHttpOKResponse<Post[]>(result);
+			const result = (await this.userService.getAllUsers()) as User[];
+			return this.responseService.makeHttpOKResponse<User[]>(result);
 		} catch (error: unknown) {
 			return this.responseService.makeHttpError(error);
 		}
 	}
 
-	async addPost(
-		httpRequest: HttpRequestType<Post>,
-	): Promise<HandleRequestResultType<Post | unknown>> {
+	async addUser(
+		httpRequest: HttpRequestType<User>,
+	): Promise<HandleRequestResultType<User | unknown>> {
 		if (!httpRequest.body) {
 			return this.responseService.makeHttpError(
 				new InvalidPropertyError('Bad request. No POST body.'),
 			);
 		}
 
-		const { title, description } = httpRequest.body;
+		const { name, email, password } = httpRequest.body;
 
 		const id = randomBytes(8).toString('hex');
 
 		try {
-			const post = { id, title, description };
-			const result = await this.postService.addPost(post);
+			const user = { id, name, email, password };
+			const result = await this.userService.addUser(user);
 
-			return this.responseService.makeHttpOKResponse<Post>(result);
+			return this.responseService.makeHttpOKResponse<User>(result);
 		} catch (error: unknown) {
 			return this.responseService.makeHttpError(error);
 		}
 	}
 }
 
-export { PostController };
+export { UserController };
