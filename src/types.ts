@@ -1,4 +1,6 @@
 //Http
+import { SerializeErrorsReturnType } from './services/common/errors';
+
 export enum HttpStatusCode {
 	OK = 200,
 	BAD_REQUEST = 400,
@@ -6,6 +8,10 @@ export enum HttpStatusCode {
 	METHOD_NOT_ALLOWED = 405,
 	CONFLICT = 409,
 	INTERNAL_SERVER_ERROR = 500,
+}
+
+export enum ErrorResponseMessages {
+	INTERNAL_SERVER_ERROR = 'Internal Server Error',
 }
 
 export enum HttpMethods {
@@ -20,5 +26,5 @@ export type HandleRequestResultType<T = unknown> = {
 	headers?: Record<string, string>;
 	statusCode: number;
 	data?: T | Error;
-	errorMessage?: string;
+	errorMessage?: SerializeErrorsReturnType;
 };

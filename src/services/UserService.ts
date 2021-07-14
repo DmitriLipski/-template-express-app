@@ -1,14 +1,16 @@
 import { Service } from 'typedi';
 import { User } from '../models/User';
 import { UserRepository } from '../repositories/UserRepository';
-import { InvalidPropertyError, requiredParam } from './common/ResponseService';
 import { ValidationService } from './common/ValidationService';
+import { InvalidPropertyError } from './common/errors';
+import { ErrorService } from './common/ErrorService';
 
 @Service()
 class UserService {
 	constructor(
 		private readonly userRepository: UserRepository,
 		private readonly validationService: ValidationService,
+		private readonly errorService: ErrorService,
 	) {}
 	async getAllUsers(): Promise<User[] | Error> {
 		return await this.userRepository.getAllUsers();
@@ -23,9 +25,9 @@ class UserService {
 	validateUser(userData: User): User {
 		const {
 			id,
-			name = requiredParam('name'),
-			email = requiredParam('email'),
-			password = requiredParam('password'),
+			name = this.errorService.requiredParam('name'),
+			email = this.errorService.requiredParam('email'),
+			password = this.errorService.requiredParam('password'),
 		} = userData;
 
 		this.validateUserEmail(email as string);
